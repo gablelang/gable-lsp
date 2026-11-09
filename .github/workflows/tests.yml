@@ -13,11 +13,22 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, macos-latest]
-        python: ["3.9", "3.12"]
+        include:
+          # 3.9 is the oldest supported interpreter. It has no managed build on
+          # the newest Ubuntu images, so pin that cell to 24.04.
+          - os: ubuntu-24.04
+            python: "3.9"
+          - os: ubuntu-latest
+            python: "3.12"
+          - os: macos-latest
+            python: "3.9"
+          - os: macos-latest
+            python: "3.12"
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      # Windows is not in the matrix: the test suite drives a shebang-based
+      # fake compiler, and that path has not been validated on Windows yet.
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
         with:
           python-version: ${{ matrix.python }}
       - name: Run the test suite
