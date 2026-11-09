@@ -51,7 +51,7 @@ All four sections below assume Gable files are associated with a `gable`
 filetype and that diagnostics appear after the first edit or save. The server
 also supports TCP for editors that prefer a socket (see the end of this file).
 
-### Neovim (0.10+ built-in LSP)
+### Neovim (0.11+ built-in LSP)
 
 `~/.config/nvim/after/ftplugin/gable.lua` (plus a filetype registration):
 
@@ -69,8 +69,9 @@ vim.lsp.config("gable_lsp", {
 vim.lsp.enable("gable_lsp")
 ```
 
-For Neovim 0.9 and older use `nvim-lspconfig`'s `start()` with the same `cmd`
-and `filetypes` (see `editors/nvim/gable.lua`).
+`vim.lsp.config`/`vim.lsp.enable` need Neovim 0.11 or newer. For Neovim
+0.9/0.10 use the `nvim-lspconfig` variant in `editors/nvim/lspconfig-gable.lua`,
+which registers the same command as a custom server.
 
 Formatting is opt-in: `:lua vim.lsp.buf.format()` or a `gq` mapping. Nothing
 is changed automatically unless you add an autocmd.
@@ -98,16 +99,17 @@ with `:format` (`:fmt` in older Helix builds).
 
 ### VS Code
 
-`editors/vscode/` contains a minimal extension (no build step, no
-dependencies): it launches `gable-lsp` over stdio for `.gable` documents and
-picks up a `gable.path` setting.
+`editors/vscode/` contains a minimal client extension (it only launches the
+server and forwards settings):
 
 ```sh
-code --install-extension editors/vscode
+cd editors/vscode && npm install
+code --extensionDevelopmentPath="$PWD"
 ```
 
-Or point any generic LSP client extension at the command `gable-lsp` with
-argument `--stdio`.
+See `editors/vscode/README.md` for packaging a `.vsix`. Or point any generic
+LSP client extension at the command `gable-lsp` with argument `--stdio` —
+nothing in the server depends on this extension.
 
 ### Sublime Text
 

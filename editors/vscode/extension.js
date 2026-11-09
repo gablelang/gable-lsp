@@ -5,8 +5,19 @@
 // generic LSP client extension configured with `gable-lsp --stdio` gives the
 // same result; this exists so the repository ships a working VS Code setup.
 
-const { workspace } = require("vscode");
-const { LanguageClient, TransportKind } = require("vscode-languageclient/node");
+const { workspace, window } = require("vscode");
+
+let LanguageClient;
+let TransportKind;
+try {
+  ({ LanguageClient, TransportKind } = require("vscode-languageclient/node"));
+} catch (error) {
+  window.showErrorMessage(
+    "gable-lsp: the extension is not built. Run `npm install` inside editors/vscode, " +
+    "or use any generic LSP client extension with `gable-lsp --stdio`."
+  );
+  throw error;
+}
 
 let client;
 
@@ -31,6 +42,12 @@ async function activate(context) {
     initializationOptions: settings(),
     synchronize: { configurationSection: "gable" },
   };
+  // LSP message tracing, controlled by the standard `gable_lsp.trace.server`
+  // setting that language clients create for themselves.
+  const trace = workspace.getConfiguration("gable_lsp").get("trace.server", "off");
+  if (trace !== "off") {
+    clientOptions.traceOutputChannel = window.createOutputChannel("Gable LSP Trace");
+  }
   client = new LanguageClient("gable-lsp", "Gable Language Server", serverOptions, clientOptions);
   context.subscriptions.push(client.start());
 }

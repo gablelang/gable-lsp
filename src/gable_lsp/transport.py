@@ -16,8 +16,6 @@ from __future__ import annotations
 
 import socket
 import sys
-import threading
-from dataclasses import dataclass
 from typing import Optional
 
 from .log import get_logger
@@ -28,25 +26,16 @@ from .settings import Settings
 logger = get_logger(__name__)
 
 
-@dataclass
-class Session:
-    server: Server
-    endpoint: Endpoint
-
-
-def stdio_session(settings: Settings) -> Session:
-    """Endpoint over the process's stdin/stdout (binary mode)."""
-
-    reader = sys.stdin.buffer
-    writer = sys.stdout.buffer
-    endpoint = Endpoint(reader, writer)
-    return Session(Server(endpoint, settings), endpoint)
-
-
 def serve_stdio(settings: Settings) -> int:
-    session = stdio_session(settings)
+    """Serve one client over the process's stdin/stdout (binary mode).
+
+    Protocol frames are the only bytes ever written to stdout; logs go to
+    stderr or ``--log-file``.
+    """
+
+    endpoint = Endpoint(sys.stdin.buffer, sys.stdout.buffer)
     try:
-        return session.server.run()
+        return Server(endpoint, settings).run()
     except KeyboardInterrupt:  # pragma: no cover - interactive
         return 1
 
@@ -57,7 +46,6 @@ def serve_tcp(
     host: str = "0.0.0.0",
     port: int = 0,
     accept_forever: bool = False,
-    ready: Optional[threading.Event] = None,
 ) -> int:
     """Listen on ``host:port`` and serve one LSP client.
 
@@ -78,8 +66,6 @@ def serve_tcp(
         return 1
     bound_host, bound_port = listener.getsockname()[:2]
     logger.info("listening for LSP clients on %s:%s", bound_host, bound_port)
-    if ready is not None:
-        ready.set()
 
     exit_code = 0
     try:

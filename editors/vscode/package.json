@@ -49,16 +49,6 @@
           "type": "number",
           "default": 150,
           "description": "Quiet period before a changed buffer is checked."
-        },
-        "gable.trace.server": {
-          "type": "string",
-          "enum": [
-            "off",
-            "messages",
-            "verbose"
-          ],
-          "default": "off",
-          "description": "Trace LSP messages in the output channel."
         }
       }
     }

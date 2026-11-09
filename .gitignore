@@ -13,3 +13,5 @@ dist/
 htmlcov/
 *.lsp-check-*
 *.lsp-format-*
+node_modules/
+*.vsix
