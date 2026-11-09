@@ -180,11 +180,24 @@ vim.lsp.config("gable_lsp", { cmd = function() return vim.lsp.rpc.connect("127.0
 One client is served per process, and the process exits when that client
 disconnects — the same lifecycle as stdio. Use `--tcp-listen` to keep serving
 reconnects, or `--port 0` to let the OS choose (the chosen port is logged to
-stderr). TCP mode is also the easiest way to drive the server by hand:
+stderr). TCP mode is also the easiest way to inspect a session by hand:
 
 ```sh
-printf 'Content-Length: 91\r\n\r\n{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"capabilities":{}}}' | nc localhost 9257
+# Send initialize, print whatever comes back, then hang up.
+python3 - <<'PY' | nc -q1 127.0.0.1 9257
+import json
+body = json.dumps({"jsonrpc": "2.0", "id": 1, "method": "initialize",
+                   "params": {"capabilities": {}}}).encode()
+print(f"Content-Length: {len(body)}\r\n\r\n", end="")
+print(body.decode(), end="")
+PY
 ```
+
+The reply is a framed JSON-RPC response (`Content-Length` header, blank line,
+JSON body); `serverInfo` and `capabilities` are in it. Because a bare
+connection sends no `shutdown`, the server exits with status 1 when the socket
+closes — that is the "client went away without shutting down" convention, not a
+failure.
 
 ## How diagnostics work
 
