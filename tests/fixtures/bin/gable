@@ -1,0 +1,68 @@
+#!/usr/bin/env python3
+"""A deterministic stand-in for the gable CLI, used by the test suite.
+
+`check` reports a single error for lines starting with the marker ``BAD`` and
+`fmt` indents marker lines. It exercises the server's parser and plumbing
+without requiring a built compiler; the real-compiler tests skip when the
+binary is absent.
+"""
+
+import os
+import sys
+
+ERROR_MARKER = "BAD"
+
+
+def read_lines(path):
+    with open(path, "r", encoding="utf-8", newline="") as handle:
+        return handle.read().splitlines()
+
+
+def check(path):
+    lines = read_lines(path)
+    errors = 0
+    for number, line in enumerate(lines, start=1):
+        stripped = line.lstrip()
+        if not stripped.startswith(ERROR_MARKER):
+            continue
+        errors += 1
+        column = len(line) - len(stripped) + 1
+        print(f"{path}:{number}:{column}: error: marker on line {number}", file=sys.stderr)
+        print(f"  {number} | {line}", file=sys.stderr)
+        print(f"    | {' ' * (column - 1)}{'^' * len(ERROR_MARKER)}", file=sys.stderr)
+    if errors:
+        print(f"gable: {errors} error(s) in {path}", file=sys.stderr)
+        return 1
+    return 0
+
+
+def fmt(path):
+    lines = read_lines(path)
+    if any(line.lstrip().startswith(ERROR_MARKER) for line in lines):
+        return 1
+    rendered = []
+    for line in lines:
+        stripped = line.lstrip()
+        if stripped.startswith("MESSY"):
+            line = "    " + stripped[len("MESSY"):].lstrip()
+        rendered.append(line)
+    with open(path, "w", encoding="utf-8", newline="") as handle:
+        handle.write("\n".join(rendered) + ("\n" if rendered else ""))
+    return 0
+
+
+def main(argv):
+    if len(argv) < 3:
+        print("usage: gable <check|fmt> <file>", file=sys.stderr)
+        return 2
+    command, path = argv[1], argv[2]
+    if command == "check":
+        return check(path)
+    if command == "fmt":
+        return fmt(path)
+    print(f"gable: unknown command {command}", file=sys.stderr)
+    return 2
+
+
+if __name__ == "__main__":
+    sys.exit(main(sys.argv))

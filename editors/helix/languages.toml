@@ -1,0 +1,14 @@
+# Append to ~/.config/helix/languages.toml (or merge if you already have one).
+
+[language-server.gable-lsp]
+command = "gable-lsp"
+args = ["--stdio"]
+
+[[language]]
+name = "gable"
+scope = "source.gable"
+injection-regex = "gable"
+file-types = ["gable"]
+comment-token = "//"
+language-servers = ["gable-lsp"]
+auto-format = false

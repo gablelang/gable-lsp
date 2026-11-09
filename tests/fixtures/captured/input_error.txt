@@ -1,0 +1,1 @@
+gable: error: cannot read '/proj/tests/fixtures/src/missing.gable': cannot open file

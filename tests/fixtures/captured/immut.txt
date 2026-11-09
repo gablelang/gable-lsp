@@ -1,0 +1,16 @@
+/proj/tests/fixtures/src/immut.gable:3:5: error: cannot assign to immutable binding 'a'; declare it with 'var' to make it mutable
+  3 |     a = 2;
+    |     ^
+/proj/tests/fixtures/src/immut.gable:2:9: note: binding declared here
+  2 |     let a: i32 = 1;
+    |         ^
+/proj/tests/fixtures/src/immut.gable:4:12: error: type mismatch in return value: expected 'int', found 'i32'
+  4 |     return a;
+    |            ^
+/proj/tests/fixtures/src/immut.gable:4:12: note: Gable does not convert between number types on its own; write an explicit conversion with 'as', for example 'value as int'
+  4 |     return a;
+    |            ^
+<gable prelude>:1:1: error: no 'main' function found; an executable requires 'fn main()' or 'fn main() -> int'
+  1 | 
+    | ^
+gable: 3 error(s) in /proj/tests/fixtures/src/immut.gable

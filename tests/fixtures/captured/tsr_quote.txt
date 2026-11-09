@@ -1,0 +1,7 @@
+/proj/tests/fixtures/src/quote.gable:3:12: error: type mismatch in return value: expected 'int', found 'str'
+  3 |     return "hello"
+    |            ^~~~~~~
+<gable prelude>:1:1: error: no 'main' function found; an executable requires 'fn main()' or 'fn main() -> int'
+  1 | 
+    | ^
+gable: 2 error(s) in /proj/tests/fixtures/src/quote.gable

@@ -1,0 +1,28 @@
+%YAML 1.2
+---
+# Minimal Gable syntax definition. For richer highlighting reuse the
+# TextMate grammar shipped with the compiler at tools/editors/gable.tmLanguage.json.
+name: Gable
+file_extensions:
+  - gable
+scope: source.gable
+contexts:
+  main:
+    - match: '//.*$'
+      scope: comment.line.double-slash.gable
+    - match: '"'
+      scope: punctuation.definition.string.begin.gable
+      push: string
+    - match: '\b(fn|return|let|var|else|while|for|break|continue|as|import|if|struct|in|true|false)\b'
+      scope: keyword.control.gable
+    - match: '\b(int|i8|u64|bool|str|void)\b'
+      scope: storage.type.gable
+    - match: '\b(print)\b'
+      scope: support.function.builtin.gable
+    - match: '\b[0-9]+\b'
+      scope: constant.numeric.gable
+  string:
+    - meta_scope: string.quoted.double.gable
+    - match: '$'
+      scope: punctuation.definition.string.end.gable
+      pop: true
