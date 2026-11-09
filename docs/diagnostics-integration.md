@@ -324,6 +324,18 @@ through `FormatterConfig`.
 
 ---
 
+### 5.1 What the CLI cannot tell you
+
+Two limitations are worth knowing before you build on this:
+
+* **`gable fmt` only ever reports success or failure.** There is no
+  `--stdout`, no `--check`-style edit list, and no way to ask for the formatted
+  text without the file being rewritten. Hence the temp copy.
+* **`gable check` compiles an entry point.** A file without `fn main()` gets an
+  extra `<gable prelude>` diagnostic. That is correct for a program and noisy
+  for a library module; the server still publishes it, because suppressing
+  compiler diagnostics would hide a real "this cannot be built" error.
+
 ## 6. Protocol details worth copying
 
 * **Never write anything but framed messages to stdout** in stdio mode. Logs go
@@ -337,7 +349,11 @@ through `FormatterConfig`.
   with code 0 only if `shutdown` was received first, otherwise 1. Editors use
   that distinction to detect crashes.
 * Requests before `initialize` get `-32002` (server not initialized). Unknown
-  requests get `-32601`; unknown notifications are ignored silently.
+  requests get `-32601`; unknown notifications are ignored silently. Requests
+  after the client answers `shutdown` must fail with `-32600`: the only legal
+  message left is `exit`.
+* The client may start sending requests as soon as `initialize` has been
+  *answered*; do not gate handlers on the `initialized` notification.
 * A handler exception becomes `-32603` for the request and must not kill the
   session.
 * Declare `textDocumentSync: {openClose: true, change: 2, save: ...}` for
@@ -393,7 +409,9 @@ caught by `tests/test_diagnostics.py` before it reaches an editor.
 `/proj/...` paths, for nine representative cases: immutable assignment, type
 mismatch, missing import, import cycle, cross-file error, caret span, division
 by zero, quoted-string span, and an input error. `tests/test_diagnostics.py`
-asserts the parsed shape and the LSP payload for each.
+asserts the parsed shape and the LSP payload for each; `test_captured_fixtures`
+checks properties (severities, spans, one-based positions, synthetic paths)
+over all of them at once, so improved wording alone does not fail the build.
 
 To re-capture fixtures against a new compiler build:
 
