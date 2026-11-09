@@ -1,0 +1,40 @@
+name: tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  unittest:
+    name: python ${{ matrix.python }} on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # 3.9 is the oldest supported interpreter. It has no managed build on
+          # the newest Ubuntu images, so pin that cell to 24.04.
+          - os: ubuntu-24.04
+            python: "3.9"
+          - os: ubuntu-latest
+            python: "3.12"
+          - os: macos-latest
+            python: "3.9"
+          - os: macos-latest
+            python: "3.12"
+    steps:
+      # Windows is not in the matrix: the test suite drives a shebang-based
+      # fake compiler, and that path has not been validated on Windows yet.
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: ${{ matrix.python }}
+      - name: Run the test suite
+        run: python -m unittest discover -s tests -t tests -v
+      - name: Check the package builds and installs
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install .
+          gable-lsp --version

@@ -1,0 +1,4 @@
+/proj/tests/fixtures/src/expr.gable:2:22: error: expected an expression, found ';'
+  2 |     let a: i32 = 1 + ;
+    |                      ^
+gable: 1 error(s) in /proj/tests/fixtures/src/expr.gable

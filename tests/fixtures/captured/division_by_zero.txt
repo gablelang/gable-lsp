@@ -1,0 +1,4 @@
+/proj/tests/fixtures/src/divzero.gable:2:26: error: division by zero
+  2 |     let total: int = 4 / 0
+    |                          ^
+gable: 1 error(s) in /proj/tests/fixtures/src/divzero.gable

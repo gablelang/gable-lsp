@@ -1,0 +1,7 @@
+/proj/tests/fixtures/src/importer.gable:1:1: error: cannot import 'absent.gable': cannot open file
+  1 | import "absent.gable";
+    | ^~~~~~~~~~~~~~~~~~~~~~
+/proj/tests/fixtures/src/importer.gable:1:1: note: imports are resolved relative to the importing file
+  1 | import "absent.gable";
+    | ^~~~~~~~~~~~~~~~~~~~~~
+gable: 1 error(s) in /proj/tests/fixtures/src/importer.gable

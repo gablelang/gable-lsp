@@ -1,0 +1,59 @@
+{
+  "name": "gable-lsp",
+  "displayName": "Gable Language Server",
+  "description": "Language Server Protocol client for the Gable language (diagnostics and formatting via gable-lsp).",
+  "version": "0.1.0",
+  "publisher": "gablelang",
+  "license": "Apache-2.0",
+  "engines": {
+    "vscode": "^1.82.0"
+  },
+  "categories": [
+    "Programming Languages",
+    "Linters",
+    "Formatters"
+  ],
+  "activationEvents": [
+    "onLanguage:gable"
+  ],
+  "main": "./extension.js",
+  "contributes": {
+    "languages": [
+      {
+        "id": "gable",
+        "aliases": [
+          "Gable",
+          "gable"
+        ],
+        "extensions": [
+          ".gable"
+        ],
+        "configuration": "./language-configuration.json"
+      }
+    ],
+    "configuration": {
+      "type": "object",
+      "title": "Gable",
+      "properties": {
+        "gable.serverPath": {
+          "type": "string",
+          "default": "gable-lsp",
+          "description": "Command used to launch the language server."
+        },
+        "gable.path": {
+          "type": "string",
+          "default": "gable",
+          "description": "Path to the Gable compiler binary used for diagnostics and formatting."
+        },
+        "gable.check.debounceMs": {
+          "type": "number",
+          "default": 150,
+          "description": "Quiet period before a changed buffer is checked."
+        }
+      }
+    }
+  },
+  "dependencies": {
+    "vscode-languageclient": "^9.0.1"
+  }
+}

@@ -1,0 +1,4 @@
+/proj/mismatch.gable:3:18: error: type mismatch in initializer: expected 'int', found 'str'
+  3 |     let n: int = text
+    |                  ^~~~
+gable: 1 error(s) in /proj/mismatch.gable

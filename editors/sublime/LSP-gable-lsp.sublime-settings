@@ -1,0 +1,17 @@
+// Merge into Preferences: LSP Settings (Package Settings -> LSP -> Settings),
+// or save as Packages/User/LSP-gable-lsp.sublime-settings.
+{
+  "clients": {
+    "gable-lsp": {
+      "enabled": true,
+      "command": ["gable-lsp", "--stdio"],
+      "selector": "source.gable",
+      "syntaxes": ["Gable"],
+      "settings": {
+        "gable": {
+          "path": "gable"
+        }
+      }
+    }
+  }
+}

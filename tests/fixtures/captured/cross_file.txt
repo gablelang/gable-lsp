@@ -1,0 +1,4 @@
+/proj/badtype.gable:3:12: error: type mismatch in return value: expected 'int', found 'str'
+  3 |     return x
+    |            ^
+gable: 1 error(s) in /proj/root.gable

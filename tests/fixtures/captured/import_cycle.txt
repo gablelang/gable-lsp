@@ -1,0 +1,7 @@
+/proj/b.gable:1:1: error: import cycle: /proj/main.gable -> /proj/b.gable -> /proj/main.gable
+  1 | import "main.gable"
+    | ^~~~~~~~~~~~~~~~~~~
+/proj/b.gable:1:1: note: imports must form a directed acyclic graph; move the shared declarations into a third file that both import
+  1 | import "main.gable"
+    | ^~~~~~~~~~~~~~~~~~~
+gable: 1 error(s) in /proj/main.gable
