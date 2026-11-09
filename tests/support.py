@@ -15,10 +15,34 @@ SRC_ROOT = os.path.join(REPO_ROOT, "src")
 FIXTURE_BIN = os.path.join(REPO_ROOT, "tests", "fixtures", "bin", "gable")
 CAPTURED = os.path.join(REPO_ROOT, "tests", "fixtures", "captured")
 
-# The real compiler, when this checkout was tested next to a built copy.
-REAL_GABLE = os.environ.get(
-    "GABLE_BIN", "/home/user/gable-ref/gable-main/build/gable"
-)
+def _find_real_compiler() -> str:
+    """Locate a real ``gable`` binary for the optional integration tests.
+
+    Order: ``GABLE_BIN``, then ``gable`` on PATH, then a few conventional
+    build locations (a sibling checkout, ``build/``, ``target/``). The tests
+    that use it skip when nothing is found.
+    """
+
+    explicit = os.environ.get("GABLE_BIN")
+    if explicit:
+        return explicit
+    from shutil import which
+
+    on_path = which("gable")
+    if on_path:
+        return on_path
+    candidates = [
+        os.path.join(os.path.dirname(REPO_ROOT), "gable", "build", "gable"),
+        os.path.join(REPO_ROOT, "build", "gable"),
+        os.path.join(REPO_ROOT, "..", "gable-ref", "gable-main", "build", "gable"),
+    ]
+    for candidate in candidates:
+        if os.path.isfile(candidate) and os.access(candidate, os.X_OK):
+            return os.path.abspath(candidate)
+    return ""
+
+
+REAL_GABLE = _find_real_compiler()
 
 
 def ensure_import_path() -> None:

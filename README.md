@@ -251,12 +251,12 @@ python3 -m unittest discover -s tests -t tests -v
 The suite needs only the standard library and runs in a few seconds. It spins
 up real `python -m gable_lsp` child processes for the end-to-end cases, using a
 deterministic fake compiler, so it works on a machine without Gable installed.
-When a real binary is available it uses that too: set `GABLE_BIN=/path/to/gable`
-(or build the compiler where this repository's test support expects it,
-`/home/user/gable-ref/gable-main/build/gable`). Those tests cover
-related-information from real notes, diagnostics published for imported files,
-and a formatting comparison with `gable fmt` itself. Without a compiler they
-skip, so CI needs nothing but Python.
+A few extra tests exercise a real compiler. They look for `gable` on `PATH`,
+then for a built copy in a sibling `gable/` checkout, and finally honour an
+explicit `GABLE_BIN=/path/to/gable`. Those tests cover related-information from
+real notes, diagnostics published for imported files, and a formatting
+comparison with `gable fmt` itself. When no compiler is found they skip, so CI
+needs nothing but Python.
 
 Regenerate the captured fixtures after a compiler upgrade:
 
